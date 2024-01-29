@@ -1,0 +1,34 @@
+name: User Service CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: CI/CD Pipeline
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['16.17']
+
+    steps:
+      - name: Checkout Git Branch
+        uses: actions/checkout@v2
+
+      - name: Zip deployment
+        run: zip -r deployment-${{ github.SHA }}.zip .
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ secrets.EB_APPLICATION_NAME }}
+          environment_name: ${{ secrets.EB_ENVIRONMENT_NAME }}
+          version_label: ${{ steps.build-tag.outputs.BUILD_TAG }}
+          version_description: ${{ github.SHA }}
+          region: ${{ secrets.EB_REGION }}
+          deployment_package: deployment-${{ github.SHA }}
+          wait_for_environment_recovery: 60
