@@ -35,4 +35,3 @@ jobs:
           version_description: ${{ steps.build-tag.outputs.BUILD_TAG }}
           region: us-west-1
           deployment_package: deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip
-          wait_for_environment_recovery: 60
