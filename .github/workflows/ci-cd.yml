@@ -17,8 +17,12 @@ jobs:
       - name: Checkout Git Branch
         uses: actions/checkout@v2
 
+      - name: Set Build Tag
+        id: build-tag
+        run: echo "BUILD_TAG=$(date '+%Y.%m.%d.%H.%M.%S')" >> $GITHUB_OUTPUT
+
       - name: Zip deployment
-        run: zip -r deployment-${{ github.SHA }}.zip .
+        run: zip -r deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip .
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -26,9 +30,9 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: test-eb-node-js-app
-          environment_name: test-eb-node-js-app-env
-          version_label: ${{ github.SHA }}
-          version_description: ${{ github.SHA }}
+          environment_name: test-eb-node-js-app-env-1
+          version_label: ${{ steps.build-tag.outputs.BUILD_TAG }}
+          version_description: ${{ steps.build-tag.outputs.BUILD_TAG }}
           region: us-west-1
-          deployment_package: deployment-${{ github.SHA }}.zip
+          deployment_package: deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip
           wait_for_environment_recovery: 60
