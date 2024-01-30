@@ -1,7 +1,7 @@
 const port = process.env.PORT || 3000,
   http = require('http'),
   fs = require('fs'),
-  html = fs.readFileSync('index.html');
+  html = fs.readFileSync('./build/index.html');
 
 const log = function (entry) {
   fs.appendFileSync(
@@ -35,11 +35,8 @@ const server = http.createServer(function (req, res) {
     });
   } else {
     res.writeHead(200);
-    res.write(`Hello World T2 from port ${port}!`);
+    res.write(html);
     res.end();
-    // res.writeHead(200);
-    // res.write(html);
-    // res.end();
   }
 });
 
