@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "npm -C backend start",
-    "install-all": "npm -C backend i && npm -C frontend i",
     "build-frontend": "npm -C frontend run build"
   },
   "repository": {

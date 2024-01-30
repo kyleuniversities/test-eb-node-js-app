@@ -26,8 +26,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Node Dependencies
-        run: npm run install-all
+      - name: Install Backend App
+        run: |
+          cd backend
+          npm install
+          cd ..
+
+        - name: Install and Build Frontend App
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          cd ..
 
       - name: Build frontend app
         run: npm run build-frontend
