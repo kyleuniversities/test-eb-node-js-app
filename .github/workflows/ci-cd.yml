@@ -27,7 +27,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Node Dependencies
-        run: npm i
+        run: npm run install-all
+
+      - name: Build frontend app
+        run: npm run build-frontend
 
       - name: Zip deployment
         run: zip -r deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip .
