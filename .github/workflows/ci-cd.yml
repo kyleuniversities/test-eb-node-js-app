@@ -32,7 +32,7 @@ jobs:
           npm install
           cd ..
 
-        - name: Install and Build Frontend App
+      - name: Install and Build Frontend App
         run: |
           cd frontend
           npm install
