@@ -1,7 +1,7 @@
 const port = process.env.PORT || 3000,
   http = require('http'),
   fs = require('fs'),
-  html = fs.readFileSync('./build/index.html');
+  html = fs.readFileSync('index.html');
 
 const log = function (entry) {
   fs.appendFileSync(
