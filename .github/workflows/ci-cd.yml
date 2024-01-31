@@ -26,16 +26,24 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Backend App
+      - name: Set Up Backend App
         run: |
           cd backend
           npm install
+          cp env-template.txt .env
+          sed -i -e "s/_DATABASE_HOST/${{ secrets.DATABASE_HOST }}/g" .env
+          sed -i -e "s/_DATABASE_PORT/${{ secrets.DATABASE_PORT }}/g" .env
+          sed -i -e "s/_DATABASE_USERNAME/${{ secrets.DATABASE_USERNAME }}/g" .env
+          sed -i -e "s/_DATABASE_PASSWORD/${{ secrets.DATABASE_PASSWORD }}/g" .env
+          sed -i -e "s/_DATABASE_DATABASE/${{ secrets.DATABASE_DATABASE }}/g" .env
           cd ..
 
-      - name: Install and Build Frontend App
+      - name: Set Up Frontend App
         run: |
           cd frontend
           npm install
+          cp env-template.txt .env
+          sed -i -e "s/_REACT_APP_API_FULL_HOST/${{ secrets.REACT_APP_API_FULL_HOST }}/g" .env
           npm run build
           cd ..
 

@@ -1,11 +1,10 @@
 {
   "name": "test-eb-node-js-app",
   "version": "1.0.0",
-  "description": "Test Elastic Beanstalk Node JS App",
+  "description": "User Service JS is a simple project to review my Full Stack experience in ReactJS and NodeJS, as well as get some hands-on experience in AWS Elastic Beanstalk.",
   "main": "index.js",
   "scripts": {
-    "start": "npm -C backend start",
-    "build-frontend": "npm -C frontend run build"
+    "start": "npm -C backend start"
   },
   "repository": {
     "type": "git",
