@@ -48,9 +48,6 @@ jobs:
           npm run build
           cd ..
 
-      - name: Build frontend app
-        run: npm run build-frontend
-
       - name: Zip deployment
         run: zip -r deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip .
 
