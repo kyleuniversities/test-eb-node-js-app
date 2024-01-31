@@ -3,7 +3,7 @@ name: User Service CI/CD
 on:
   push:
     branches:
-      - main
+      - app/deployment
 
 jobs:
   deploy:
@@ -17,18 +17,48 @@ jobs:
       - name: Checkout Git Branch
         uses: actions/checkout@v2
 
+      - name: Set Build Tag
+        id: build-tag
+        run: echo "BUILD_TAG=$(date '+%Y.%m.%d.%H.%M.%S')" >> $GITHUB_OUTPUT
+
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Set Up Backend App
+        run: |
+          cd backend
+          npm install
+          cp env-template.txt .env
+          sed -i -e "s/_DATABASE_HOST/${{ secrets.DATABASE_HOST }}/g" .env
+          sed -i -e "s/_DATABASE_PORT/${{ secrets.DATABASE_PORT }}/g" .env
+          sed -i -e "s/_DATABASE_USERNAME/${{ secrets.DATABASE_USERNAME }}/g" .env
+          sed -i -e "s/_DATABASE_PASSWORD/${{ secrets.DATABASE_PASSWORD }}/g" .env
+          sed -i -e "s/_DATABASE_DATABASE/${{ secrets.DATABASE_DATABASE }}/g" .env
+          cd ..
+
+      - name: Set Up Frontend App
+        run: |
+          cd frontend
+          npm install
+          cp env-template.txt .env
+          cat .env
+          sed -i -e "s/_REACT_APP_API_FULL_HOST/\${{ secrets.REACT_APP_API_FULL_HOST }}/g" .env
+          npm run build
+          cd ..
+
       - name: Zip deployment
-        run: zip -r deployment-${{ github.SHA }}.zip .
+        run: zip -r deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip .
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ${{ secrets.EB_APPLICATION_NAME }}
-          environment_name: ${{ secrets.EB_ENVIRONMENT_NAME }}
+          application_name: test-eb-node-js-app
+          environment_name: test-eb-node-js-app-env-origin
           version_label: ${{ steps.build-tag.outputs.BUILD_TAG }}
-          version_description: ${{ github.SHA }}
-          region: ${{ secrets.EB_REGION }}
-          deployment_package: deployment-${{ github.SHA }}
-          wait_for_environment_recovery: 60
+          version_description: ${{ steps.build-tag.outputs.BUILD_TAG }}
+          region: us-west-1
+          deployment_package: deployment-${{ steps.build-tag.outputs.BUILD_TAG }}.zip
