@@ -44,7 +44,7 @@ jobs:
           npm install
           cp env-template.txt .env
           cat .env
-          sed -i -e "s/_REACT_APP_API_FULL_HOST/${{ secrets.REACT_APP_API_FULL_HOST }}/g" .env
+          sed -i -e "s/_REACT_APP_API_FULL_HOST/\${{ secrets.REACT_APP_API_FULL_HOST }}/g" .env
           npm run build
           cd ..
 
